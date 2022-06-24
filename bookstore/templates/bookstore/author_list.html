@@ -1,0 +1,11 @@
+{% extends 'bookstore/index.html' %}
+
+{% block content %}
+<h3>{{au_list.first_name}} {{au_list.last_name}}</h3>
+<div>
+    <p>Список книг автора:</p>
+    {% for a in book_au %}
+    <li><a href="{% url 'book' a.id %}">{{a.title}}</a></li>
+    {% endfor %}
+</div>
+{% endblock %}
