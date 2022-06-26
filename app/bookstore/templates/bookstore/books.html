@@ -1,0 +1,12 @@
+{% extends 'bookstore/index.html' %}
+
+{% block content %}
+<h3>Список книг:</h3>
+<div>
+    <ul>
+        {% for b in books %}
+        <li><a href="{% url 'book' b.id %}">{{b.title}}</a></li>
+        {% endfor %}
+    </ul>
+</div>
+{% endblock %}

@@ -1,0 +1,14 @@
+{% extends 'bookstore/index.html' %}
+
+{% block content %}
+<div>
+    <h3>{{title}}</h3>
+    <p>{{description}}</p>
+</div>
+<div>
+    <a href="{% url 'author' author_id %}">Автор книги</a>
+</div>
+<div>
+    <a href="{% url 'books' %}">Вернуться на главную страницу</a>
+</div>
+{% endblock %}
