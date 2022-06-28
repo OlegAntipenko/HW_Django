@@ -1,0 +1,13 @@
+{% extends 'bookstore/index.html' %}
+
+{% block content %}
+<div>
+    <form action="{% url 'addbook' %}" method="post">
+        {% csrf_token %}
+        <div>{{ form.non_field_errors}}</div>
+        {{ form.as_p }}
+        <button type="submit">Добавить книгу</button>
+    </form>
+</div>
+
+{% endblock %}

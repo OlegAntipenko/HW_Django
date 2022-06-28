@@ -2,11 +2,12 @@
 
 {% block content %}
 <div>
-    <h3>{{title}}</h3>
-    <p>{{description}}</p>
+    <h3>{{book_dis.title}}</h3>
+    <p>{{book_dis.description}}</p>
+    <p>Дата добавления: {{book_dis.time_create|date:"d-m-Y H:i:s"}}</p>
 </div>
 <div>
-    <a href="{% url 'author' author_id %}">Автор книги</a>
+    <a href="{% url 'author' book_dis.author_id %}">Автор книги</a>
 </div>
 <div>
     <a href="{% url 'books' %}">Вернуться на главную страницу</a>

@@ -1,80 +1,50 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 
-books = [
-    {
-        'id': 1,
-        'title': 'Записки юного врача',
-        'description': 'Записки юного врача - с цикла рассказов, вошедших в данный сборник, началась писательская биография М. А. Булгакова. В основу "Записок юного врача" легли автобиографические факты, относящиеся к периоду работы Булгакова земским врачом в одной из сельских больниц Смоленской губернии.',
-        'author_id': 1,
-
-    },
-    {
-        'id': 2,
-        'title': 'Белая гвардия',
-        'description': '1919-й год. Киев в руках петлюровцев. Страна охвачена ужасами Гражданской войны. Российская история, а с ней и прежние социальные устои, как и система моральных ценностей, в духе которых были воспитаны молодые представители семьи Турбиных, прекратили свое существование. Турбины - потерянное поколение. У них больше нет монарха, империи. Нет прежней родины. Но они пытаются жить, как прежде, и любой ценой сохранить благородство и нравственные ориентиры в безумии наступивших времен. Для лиц старше 16 лет.',
-        'author_id': 1,
-
-    },
-    {
-        'id': 3,
-        'title': 'Марсианские хроники',
-        'description': '"Марсианские хроники" - цикл новелл, принесших Рэю Бредбери мировую славу, - рассказывает о покорении человеком Красной планеты, где доживает свои последние годы некогда высокоразвитая цивилизация марсиан.',
-        'author_id': 2,
-
-    },
-    {
-        'id': 4,
-        'title': 'Вино из одуванчиков',
-        'description': 'Войдите в светлый мир двенадцатилетнего мальчика и проживите с ним одно лето, наполненное событиями радостными и печальными, загадочными и тревожными; лето, когда каждый день совершаются удивительные открытия, главное из которых — ты живой, ты дышишь, ты чувствуешь! «Вино из одуванчиков» Рэя Брэдбери — классическое произведение, вошедшее в золотой фонд мировой литературы.',
-        'author_id': 2,
-
-    },
-    {
-        'id': 5,
-        'title': 'Скотный Двор',
-        'description': '"Все животные равны, но некоторые животные равнее других" - это, наверное, самая знаменитая фраза из классической притчи Джорджа Оруэлла о крушении революционных надежд. Трагический смысл "Скотный двор" проступает сквозь яркий пародийный рисунок. В этой книге Оруэллу удалось выполнить две поставленные перед собой еще в 1936 году задачи: "разоблачить советский миф" и "сделать политическую прозу искусством".',
-        'author_id': 3,
-
-    }
-]
-
-authors = [
-    {
-        'id': 1,
-        'first_name': 'Михаил',
-        'last_name': 'Булгаков'
-    },
-    {
-        'id': 2,
-        'first_name': 'Рэй',
-        'last_name': 'Брэдбери'
-    },
-    {
-        'id': 3,
-        'first_name': 'Джордж',
-        'last_name': 'Оруэлл'
-    }
-]
+from .forms import *
+from .models import *
 
 
 def books_list(request):
-    return render(request, 'bookstore/books.html', {'books': books, 'title': 'Список книг'})
+    booklist = Books.objects.all()
+    if request.method == "GET" and 'search' in request.GET:
+        search = request.GET['search']
+        booklist = booklist.filter(title=search)
+    context = {'booklist': booklist}
+    return render(request, 'bookstore/books.html', context=context)
 
 
 def book(request, index):
-    book_dis = books[int(index) - 1]
-    return render(request, 'bookstore/book.html', context=book_dis)
+    book_dis = Books.objects.get(pk=index)
+    context = {'book_dis': book_dis}
+    return render(request, 'bookstore/book.html', context=context)
 
 
 def author(request, index):
-    author_dis = authors[int(index) - 1]
-    return render(request, 'bookstore/author.html', context=author_dis)
+    author_dis = Authors.objects.get(pk=index)
+    context = {'author_dis': author_dis}
+    return render(request, 'bookstore/author.html', context=context)
 
 
 def author_list(request, index):
-    au_list = authors[int(index) - 1]
-    book_au = []
-    for au in books:
-        if int(index) == au['author_id']:
-            book_au.append(au)
-    return render(request, 'bookstore/author_list.html', {'au_list': au_list, 'book_au': book_au})
+    au_list = Authors.objects.filter(id=index)
+    book_au = Books.objects.filter(author_id=index)
+    context = {
+        'au_list': au_list,
+        'book_au': book_au
+    }
+    return render(request, 'bookstore/author_list.html', context=context)
+
+
+def add_book(request):
+    if request.method == 'POST':
+        form = BookAdd(request.POST)
+        if form.is_valid():
+            try:
+                Books.objects.create(**form.cleaned_data)
+                return redirect('books')
+            except:
+                form.add_error(None, 'Ошибка добавления книги')
+    else:
+        form = BookAdd()
+    context = {'form': form}
+    return render(request, 'bookstore/addbook.html', context=context)
