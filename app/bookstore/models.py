@@ -1,3 +1,4 @@
+from django.contrib.auth.models import User
 from django.db import models
 
 books = [
@@ -57,6 +58,7 @@ authors = [
 ]
 
 
+
 class Books(models.Model):
     title = models.CharField(max_length=100)
     description = models.TextField(blank=True)
@@ -69,6 +71,14 @@ class Books(models.Model):
             book = Books(title=i['title'], description=i['description'], author_id=i['author_id'])
             book.save()
 
+    def __str__(self):
+        return self.title
+
+    class Meta:
+        verbose_name = 'Book'
+        verbose_name_plural = 'Books'
+
+
 class Authors(models.Model):
     first_name = models.CharField(max_length=50)
     last_name = models.CharField(max_length=50)
@@ -79,3 +89,23 @@ class Authors(models.Model):
             author = Authors(first_name=i['first_name'], last_name=i['last_name'])
             author.save()
 
+    def __str__(self):
+        return f"{self.first_name} {self.last_name}"
+
+    class Meta:
+        verbose_name = 'Author'
+        verbose_name_plural = 'Authors'
+
+
+class Comments(models.Model):
+    class Meta:
+        verbose_name = 'Comment'
+        verbose_name_plural = 'Comments'
+
+    text = models.TextField(verbose_name="Текст отзыва", max_length=500)
+    time_create = models.DateTimeField(auto_now_add=True)
+    author_comm = models.ForeignKey(User, on_delete=models.PROTECT)
+    book = models.ForeignKey('Books', on_delete=models.PROTECT)
+
+    def __str__(self):
+        return self.author_comm

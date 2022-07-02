@@ -2,14 +2,32 @@
 
 {% block content %}
 <div>
-    <h3>{{book_dis.title}}</h3>
-    <p>{{book_dis.description}}</p>
-    <p>Дата добавления: {{book_dis.time_create|date:"d-m-Y H:i:s"}}</p>
-</div>
-<div>
     <a href="{% url 'author' book_dis.author_id %}">Автор книги</a>
 </div>
 <div>
     <a href="{% url 'books' %}">Вернуться на главную страницу</a>
 </div>
+<div>
+    <h3>{{book_dis.title}}</h3>
+    <p>{{book_dis.description}}</p>
+    <p>Дата добавления: {{book_dis.time_create|date:"d-m-Y H:i:s"}}</p>
+</div>
+<hr>
+<div>
+    <p>Отзывы:</p>
+    {% for comment in comments %}
+    <p>{{ comment.text }}</p>
+    <p>Автор отзыва:{{ comment.author_comm}}  Дата добавления:{{ comment.time_create}}</p>
+    {% endfor %}
+</div>
+<div>
+    {% if user.is_authenticated %}
+    <form action="" method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Отправить</button>
+    </form>
+    {% endif %}
+</div>
+
 {% endblock %}

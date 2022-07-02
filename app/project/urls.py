@@ -7,5 +7,6 @@ from project import settings
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('firstapp.urls')),
-    path('', include('bookstore.urls'))
+    path('', include('bookstore.urls')),
+    path('account/', include('account.urls')),
 ]

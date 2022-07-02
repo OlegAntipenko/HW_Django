@@ -28,6 +28,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'bookstore',
     'firstapp',
+    'account',
 ]
 
 MIDDLEWARE = [

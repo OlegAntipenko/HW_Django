@@ -15,7 +15,22 @@ def books_list(request):
 
 def book(request, index):
     book_dis = Books.objects.get(pk=index)
-    context = {'book_dis': book_dis}
+    comments = Comments.objects.filter(book=index)
+    if request.method == 'POST':
+        form = CommentForm(request.POST)
+        if form.is_valid():
+            form = form.save(commit=False)
+            form.author_comm = request.user
+            form.book = book_dis
+            form.save()
+            return redirect(book, index)
+    else:
+        form = CommentForm()
+    context = {
+        'book_dis': book_dis,
+        'comments': comments,
+        'form': form
+    }
     return render(request, 'bookstore/book.html', context=context)
 
 
@@ -48,3 +63,4 @@ def add_book(request):
         form = BookAdd()
     context = {'form': form}
     return render(request, 'bookstore/addbook.html', context=context)
+
