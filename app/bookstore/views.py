@@ -15,7 +15,7 @@ def books_list(request):
 
 def book(request, index):
     book_dis = Books.objects.get(pk=index)
-    comments = Comments.objects.filter(book=index)
+    comments = Comments.objects.filter(book_id=index)
     if request.method == 'POST':
         form = CommentForm(request.POST)
         if form.is_valid():
